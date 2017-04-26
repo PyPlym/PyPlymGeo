@@ -168,8 +168,43 @@ def checkDistance(UTM_firstPos, UTM_secondPos):
         return distance  
           
     except Exception as e: print('Check if coordinates in correct form as (Easting, Northing)\n becasue: {}'.format(e))
-
     
+#------------------------------------------------------------------------------ 
+# CUSTOM COORDINATES TRANSLATION
+def customCoordTranslate(coordinate):
+    ''' function reads custom string as provided by andro-Sensor .csv
+    
+    :param arg1: cordinates in the form "DDMM.SSS,H,DDMM,SSS,H"
+    :type arg1: string
+    :return: return tuple of cooridnates (Easting, Northing, grid)
+    :rtype: tuple: (float, float, str)
+    
+    >>>customCoordTranslate("5022.502209,N,00408.329597,W")
+    ['30U 419021.279 5580950.271', 419021.279, 5580950.271]
+    '''
+    # separate string into single entries
+    coordList = coordinate.split(',')
+    
+    # check what you have after split
+    print(coordList)
+
+    # get each postion
+    Latit = coordList[0]
+    LatitHem = coordList[1]
+    Longit = coordList[2]
+    LongitHem = coordList[3]
+    
+    # make sure you ckeck what type each variable is:
+    print(type(Latit), Latit, LatitHem, type(Longit), Longit, LongitHem)
+
+    LatDecimal = degMinDecToFullDec(Latit +','+ LatitHem)
+    LongDecimal = degMinDecToFullDec(Longit +','+ LongitHem)
+    
+    # check what you've got:
+    print(' after converstion Latitude: {} of type: {}, Longitude: {} of type: {}'.
+          format(LatDecimal, type(LatDecimal), LongDecimal, type(LongDecimal)))
+    
+    return  LonLatToUTM(LatDecimal, LongDecimal)
 
 if __name__ == '__main__':
 
@@ -197,6 +232,8 @@ if __name__ == '__main__':
     distUniTinqTanq = checkDistance((utmUni[1], utmUni[2]), (utmTT[1],utmTT[2]))
     print('distance between Uni and ThinqTanq = {}'.format(distUniTinqTanq))
     
+    print(customCoordTranslate("5022.502209,N,00408.329597,W"))
     
-    import doctest
-    doctest.testmod()
+#     import doctest
+#     doctest.testmod()
+    
