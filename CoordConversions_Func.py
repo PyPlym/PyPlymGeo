@@ -6,6 +6,7 @@ Collection of conversion functions
 '''
 import utm
 from utm.error import OutOfRangeError
+import math 
 
 #------------------------------------------------------------------------------ 
 # CHALLANGE:
@@ -135,22 +136,67 @@ def LonLatToUTM(Lat, Long):
     # returns Google Earth format and Easting and Northind as float
     return [GooglEarth, float(East), float(North)]
 
+#------------------------------------------------------------------------------ 
+# CALCULATING DISTANCE 
+
+def checkDistanceShort(UTM_firstPos, UTM_secondPos):
+    ''' check straigth line distance between two points
+    it is possible but unreadable'''
+    return ((UTM_firstPos[0]-UTM_secondPos[0])**2+(UTM_firstPos[1]-UTM_secondPos[1])**2)**(0.5)
+
+def checkDistance(UTM_firstPos, UTM_secondPos):
+    ''' better function
+    check straigth line distance between two points
+    
+    :param arg1: Easting and Northing of the first position
+    :param arg2: Easting and Northing of the second position
+    :type arg1: tuple (Easting, Northing)
+    :type arg1: tuple (Easting, Northing)
+    :return: return distance in metres
+    :rtype: float
+    '''
+    try:
+        # x,y coordinates of the first point
+        xPos1 = UTM_firstPos[0]
+        yPos1 = UTM_firstPos[1]
+        # x,y coordinates of the second point
+        xPos2 = UTM_secondPos[0]
+        yPos2 = UTM_secondPos[1]
+        # cartesian distance
+        distance = math.sqrt((xPos1-xPos2)**2 + (yPos1-yPos2)**2)
+        
+        return distance  
+          
+    except Exception as e: print('Check if coordinates in correct form as (Easting, Northing)\n becasue: {}'.format(e))
+
+    
+
 if __name__ == '__main__':
 
     # ThinqTanq position:
     ThinqTanq_Decimal = [50.369334, -4.139102]
     ThinqTanq_UTM = '30U 418991.987 5580316.488'
-        
-    pos = '50 05.0713061 N'
-    print(degMinDecToFullDec(pos))
+    
+    uni_Deg = ('50 22.502209 N', '004 08.329597 W')
+
+    uni_decimal = (degMinDecToFullDec(uni_Deg[0]), degMinDecToFullDec(uni_Deg[1]))
+    print('check in map: ', uni_decimal)
       
     Latit = ThinqTanq_Decimal[0]
     Longit = ThinqTanq_Decimal[1]
-    utmPos = LonLatToUTM(Latit, Longit)
+    utmTT = LonLatToUTM(Latit, Longit)
+    utmUni = LonLatToUTM(uni_decimal[0], uni_decimal[1])
  
-    print('utmPos = %s' % str(utmPos))
+    print('utmThinqTanq = %s' % str(utmTT))
     print(deg_to_dms(Latit))
     print(deg_to_dms(Longit))    
+    
+    print('utmUni = {}'.format(utmUni))
+    
+    print((utmUni[1], utmUni[2]), (utmTT[1],utmTT[2]))
+    distUniTinqTanq = checkDistance((utmUni[1], utmUni[2]), (utmTT[1],utmTT[2]))
+    print('distance between Uni and ThinqTanq = {}'.format(distUniTinqTanq))
+    
     
     import doctest
     doctest.testmod()
