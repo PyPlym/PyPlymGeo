@@ -4,7 +4,7 @@ Created on 26 Apr 2017
 @author: T
 '''
 import csv
-from coordConversions_Func import LonLatToUTM
+from CoordConversions_Func import LonLatToUTM
 import matplotlib.pyplot as plt
 
 def readAndroSensor(fileToRead, sensorColumn = 12):
@@ -18,16 +18,16 @@ def readAndroSensor(fileToRead, sensorColumn = 12):
     :rtype: [float,], [float,], [float,], [float,], [float,]
     
     Data from sensors:
-    0: ACCELEROMETER X (m/s²) 
-    1: ACCELEROMETER Y (m/s²) 
-    2: ACCELEROMETER Z (m/s²)   
+    0: ACCELEROMETER X (m/s2) 
+    1: ACCELEROMETER Y (m/s2) 
+    2: ACCELEROMETER Z (m/s2)   
     12: LIGHT (lux)    
-    13: MAGNETIC FIELD X (μT)    
-    14: MAGNETIC FIELD Y (μT)    
-    15: MAGNETIC FIELD Z (μT)    
-    16: ORIENTATION Z (azimuth °)    
-    17: ORIENTATION X (pitch °)    
-    18: ORIENTATION Y (roll °)    
+    13: MAGNETIC FIELD X (uT)    
+    14: MAGNETIC FIELD Y (uT)    
+    15: MAGNETIC FIELD Z (uT)    
+    16: ORIENTATION Z (azimuth degrees)    
+    17: ORIENTATION X (pitch degrees)    
+    18: ORIENTATION Y (roll degrees)    
     19: PROXIMITY (m)    
     20: ATMOSPHERIC PRESSURE (hPa)    
     21: SOUND LEVEL (dB)    
