@@ -9,27 +9,30 @@ from utm.error import OutOfRangeError
 import math 
 
 #------------------------------------------------------------------------------ 
-# CHALLANGE:
-# finish the function which takes input in the form: 
-# ThinqTanq_DegMinSec = "50 22'9.6\"N, 4 8'20.8\"W"
+# CHALLENGE:
+# Finish the function which takes input in the form: 
+# ThinqTanq_DegMinSec = '''50 22'9.6"N, 4 8'20.8"W'''
+# (note: the string is everything between the '''s - using this notation allows
+# the string to contain " and ' characters.)
 
 # def degDecMinToDegfFull(positionDecimal):
 #     '''
-#     function takes position represented in degrees with minutes in decimal 
+#     f position represented in degrees with minutes in decimal 
 #     notation
 #     returns position with degrees minutes seconds notation 
-#     >>> degrDecToDegfFull("50 22'9.6\"N, 4 8'20.8\"W")     
+#     >>> degrDecToDegfFull('''50 22'9.6"N, 4 8'20.8"W''')     
 #     50.369334, -4.139102
 #     '''
 #     positionFull = []
 #     return positionFull
 
-def deg_to_dms(deg):
+def dec_to_deg_min_sec(deg):
     '''Translate coordinates in degree decimal representation to 
-    degree, minutes, seconds
-    >>> deg_to_dms(50.084522)
+    degree, minutes, seconds.
+    Examples:
+    >>> dec_to_deg_min_sec(50.084522)
     [50, 5, 4.27919999999915]
-    >>> deg_to_dms(-5.699057)
+    >>> dec_to_deg_min_sec(-5.699057)
     [-5, 41, 56.60519999999934]
     '''
     d = int(deg)
@@ -38,42 +41,39 @@ def deg_to_dms(deg):
     sd = (md - m) * 60
     return [d, m, sd]
 
-def degMinDecToFullDec(position):
-    ''' function converts coordinate from degrees and minutes to decimal degree
+def deg_min_str_to_dec(position):
+    ''' Convert a coordinate from a string containing degrees and minutes to decimal degree.
+    Examples:
     >>> pos = '50 05.0713061 N'
-    >>> degMinDecToFullDec(pos)
+    >>> deg_min_str_to_dec(pos)
     50.08452177
-    >>> degMinDecToFullDec('005 41.9434092 W')
+    >>> deg_min_str_to_dec('005 41.9434092 W')
     -5.69905682
-    >>> degMinDecToFullDec('50 05.0713061 N')
+    >>> deg_min_str_to_dec('50 05.0713061 N')
     50.08452177
-    >>> degMinDecToFullDec('55;18.7116860N')
+    >>> deg_min_str_to_dec('55;18.7116860N')
     55.31186143
-    >>> degMinDecToFullDec('5023.1994,N')
+    >>> deg_min_str_to_dec('5023.1994,N')
     50.38665667
-    >>> degMinDecToFullDec('00408.6421,W')
+    >>> deg_min_str_to_dec('00408.6421,W')
     -4.144035
-    >>> degMinDecToFullDec('5023.1994,S')
+    >>> deg_min_str_to_dec('5023.1994,S')
     -50.38665667
-    >>> degMinDecToFullDec('00408.6421,E')
+    >>> deg_min_str_to_dec('00408.6421,E')
     4.144035
     ''' 
     if " " in position:
         l = position.split(" ")
-#        print l 
         deg = int(l[0])
         minut = float(l[1])
-#        print deg, minunt
         if l[-1] in ['S', 'W']:
             sph = -1
         else:
             sph = 1
     elif ";" in position:
         l = position.split(";")
-#        print l 
         deg = int(l[0])
         minut = float(l[1][0:-1])
-#        print deg, minut
         if l[-1] in ['S', 'W']:
             sph = -1
         else:
@@ -99,54 +99,54 @@ def degMinDecToFullDec(position):
             deg = 0
             minut = 0  
             sph = 1                                                              
-    coord = '%.8f' % ((deg + minut/60)*sph)      
-    return float(coord)
+    coord = ((deg + minut/60)*sph)
+    return round(coord, 8)
 
-def LonLatToUTM(Lat, Long):
+def lon_lat_to_utm(lat, lon):
     ''' Function converts from any [Lat, Long] to [East, North, Grid]
-    >>> LonLatToUTM(50.084522, -5.699057)
+    >>> lon_lat_to_utm(50.084522, -5.699057)
     ['30U 306918.367 5551517.614', 306918.367, 5551517.614]
-    >>> LonLatToUTM('50 05.0713061 N', '005 41.9434092 W')
+    >>> lon_lat_to_utm('50 05.0713061 N', '005 41.9434092 W')
     ['30U 306918.379 5551517.588', 306918.379, 5551517.588]
-    >>> LonLatToUTM(50.0845217683, -5.69905682)
+    >>> lon_lat_to_utm(50.0845217683, -5.69905682)
     ['30U 306918.379 5551517.588', 306918.379, 5551517.588]
     
     '''
-    # Check if Lat and Long already in decimal
-    if type(Lat)==float and type(Long)==float:
-        pass
-    elif type(Lat)==str and type(Long)==str:
-        Lat = degMinDecToFullDec(Lat)
-        Long = degMinDecToFullDec(Long)
-    # Check if correct range    
-    if not -80.0 <= Lat <= 84.0:
-        raise OutOfRangeError('latitude out of range (must be between 80 deg S and 84 deg N)')
-    if not -180.0 <= Long <= 180.0:
-        raise OutOfRangeError('northing out of range (must be between 180 deg W and 180 deg E)')
+    # Convert from strings if required.
+    if type(lat) == str:
+        lat = deg_min_str_to_dec(lat)
+    if type(lon) == str:
+        long = deg_min_str_to_dec(lon)
 
-    utmPos = utm.from_latlon(Lat, Long)
+    # Check if correct range    
+    if not -80.0 <= lat <= 84.0:
+        raise OutOfRangeError('latitude out of range (must be between 80 deg S and 84 deg N)')
+    if not -180.0 <= lon <= 180.0:
+        raise OutOfRangeError('longditude out of range (must be between 180 deg W and 180 deg E)')
+
+    utm_pos = utm.from_latlon(lat, lon)
 #    print('my utm postition from the function: {} with Lat: {} and Long: {} as input'.format(utmPos, Lat, Long))   
     # Google Earth does not accept this format. Translation for Google Earth:
-    East = '%.3f' % (utmPos[0])
-    North = '%.3f' % (utmPos[1])
-    Grid1 = str(utmPos[2])
-    Grid2 = str(utmPos[3])
-    GooglEarth = (Grid1 + Grid2+' '+East+' '+North) 
+    east = '%.3f' % (utm_pos[0])
+    north = '%.3f' % (utm_pos[1])
+    grid1 = str(utm_pos[2])
+    grid2 = str(utm_pos[3])
+    google_earth = (grid1 + grid2+' '+east+' '+north) 
     
-    # returns Google Earth format and Easting and Northind as float
-    return [GooglEarth, float(East), float(North)]
+    # returns Google Earth format and Easting and Northing as float
+    return [google_earth, float(east), float(north)]
 
 #------------------------------------------------------------------------------ 
 # CALCULATING DISTANCE 
 
-def checkDistanceShort(UTM_firstPos, UTM_secondPos):
-    ''' check straigth line distance between two points
-    it is possible but unreadable'''
-    return ((UTM_firstPos[0]-UTM_secondPos[0])**2+(UTM_firstPos[1]-UTM_secondPos[1])**2)**(0.5)
+def calc_distance_short(utm_pos_1, utm_pos_2):
+    ''' Calculate straight line distance between two points: works 
+    but is difficult to read!'''
+    return ((utm_pos_1[0]-utm_pos_2[0])**2+(utm_pos_1[1]-utm_pos_2[1])**2)**(0.5)
 
-def checkDistance(UTM_firstPos, UTM_secondPos):
-    ''' better function
-    check straigth line distance between two points
+def calc_distance(utm_pos_1, utm_pos_2):
+    ''' Easier to read function to calculate the straight line distance 
+    between two points.
     
     :param arg1: Easting and Northing of the first position
     :param arg2: Easting and Northing of the second position
@@ -157,13 +157,13 @@ def checkDistance(UTM_firstPos, UTM_secondPos):
     '''
     try:
         # x,y coordinates of the first point
-        xPos1 = UTM_firstPos[0]
-        yPos1 = UTM_firstPos[1]
+        x_1 = utm_pos_1[0]
+        y_1 = utm_pos_1[1]
         # x,y coordinates of the second point
-        xPos2 = UTM_secondPos[0]
-        yPos2 = UTM_secondPos[1]
+        x_2 = utm_pos_2[0]
+        y_2 = utm_pos_2[1]
         # cartesian distance
-        distance = math.sqrt((xPos1-xPos2)**2 + (yPos1-yPos2)**2)
+        distance = math.sqrt((x_1-x_2)**2 + (y_1-y_2)**2)
         
         return distance  
           
@@ -197,42 +197,45 @@ def customCoordTranslate(coordinate):
     # make sure you ckeck what type each variable is:
     print(type(Latit), Latit, LatitHem, type(Longit), Longit, LongitHem)
 
-    LatDecimal = degMinDecToFullDec(Latit +','+ LatitHem)
-    LongDecimal = degMinDecToFullDec(Longit +','+ LongitHem)
+    LatDecimal = deg_min_str_to_dec(Latit +','+ LatitHem)
+    LongDecimal = deg_min_str_to_dec(Longit +','+ LongitHem)
     
     # check what you've got:
     print(' after converstion Latitude: {} of type: {}, Longitude: {} of type: {}'.
           format(LatDecimal, type(LatDecimal), LongDecimal, type(LongDecimal)))
     
-    return  LonLatToUTM(LatDecimal, LongDecimal)
+    return  lon_lat_to_utm(LatDecimal, LongDecimal)
 
+# This is the code that will run if you just run this file as a script (rather than
+# importing it into another script.
 if __name__ == '__main__':
-
     # ThinqTanq position:
-    ThinqTanq_Decimal = [50.369334, -4.139102]
-    ThinqTanq_UTM = '30U 418991.987 5580316.488'
+    thinqtanq_decimal = [50.369334, -4.139102]
+    #thinqtanq_utm = '30U 418991.987 5580316.488'
     
-    uni_Deg = ('50 22.502209 N', '004 08.329597 W')
-
-    uni_decimal = (degMinDecToFullDec(uni_Deg[0]), degMinDecToFullDec(uni_Deg[1]))
-    print('check in map: ', uni_decimal)
+    # University position:
+    uni_deg = ('50 22.502209 N', '004 08.329597 W')
+    uni_decimal = (deg_min_str_to_dec(uni_deg[0]), deg_min_str_to_dec(uni_deg[1]))
+    print('University position (check on map):' + str(uni_decimal))
       
-    Latit = ThinqTanq_Decimal[0]
-    Longit = ThinqTanq_Decimal[1]
-    utmTT = LonLatToUTM(Latit, Longit)
-    utmUni = LonLatToUTM(uni_decimal[0], uni_decimal[1])
+    thinqtanq_lat = thinqtanq_decimal[0]
+    thinqtanq_lon = thinqtanq_decimal[1]
+
+    thinqtanq_utm = lon_lat_to_utm(thinqtanq_lat, thinqtanq_lon)
+    uni_utm = lon_lat_to_utm(uni_decimal[0], uni_decimal[1])
  
-    print('utmThinqTanq = %s' % str(utmTT))
-    print(deg_to_dms(Latit))
-    print(deg_to_dms(Longit))    
+    print('ThinqTanq UTM = %s' % str(thinqtanq_utm))
+    #print(dec_to_deg_min_sec(thinqtanq_lat))
+    #print(dec_to_deg_min_sec(thinqtanq_lon))    
     
-    print('utmUni = {}'.format(utmUni))
+    print('University UTM = {}'.format(uni_utm))
     
-    print((utmUni[1], utmUni[2]), (utmTT[1],utmTT[2]))
-    distUniTinqTanq = checkDistance((utmUni[1], utmUni[2]), (utmTT[1],utmTT[2]))
-    print('distance between Uni and ThinqTanq = {}'.format(distUniTinqTanq))
+    #print((uni_utm[1], uni_utm[2]), (thinqtanq_utm[1],thinqtanq_utm[2]))
+    distance = calc_distance((uni_utm[1], uni_utm[2]), 
+                             (thinqtanq_utm[1],thinqtanq_utm[2]))
+    print('Distance between Uni and ThinqTanq = {}'.format(distance))
     
-    print(customCoordTranslate("5022.502209,N,00408.329597,W"))
+    #print(customCoordTranslate("5022.502209,N,00408.329597,W"))
     
 #     import doctest
 #     doctest.testmod()

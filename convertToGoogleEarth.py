@@ -16,7 +16,7 @@ coord, easting, northing, light = readAndroSensor(file)
 
 kml = simplekml.Kml()
 
-ls = kml.newlinestring(name='path Uni to TT')
+ls = kml.newlinestring(name='Path From Uni to ThinqTanq')
 ls.coords = coord
 ls.extrude = 1
 ls.altitudemode = simplekml.AltitudeMode.relativetoground

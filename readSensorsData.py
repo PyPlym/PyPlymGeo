@@ -4,7 +4,7 @@ Created on 26 Apr 2017
 @author: T
 '''
 import csv
-from CoordConversions_Func import LonLatToUTM
+from CoordConversions_Func import lon_lat_to_utm
 import matplotlib.pyplot as plt
 
 def readAndroSensor(fileToRead, sensorColumn = 12):
@@ -47,7 +47,7 @@ def readAndroSensor(fileToRead, sensorColumn = 12):
         
         for row in sensorReader:  # iterate over each row and append lists
             coord.append((float(row[23]),float(row[22])))
-            utmCoord = LonLatToUTM(float(row[22]), float(row[23]))
+            utmCoord = lon_lat_to_utm(float(row[22]), float(row[23]))
             easting.append(utmCoord[1])
             northing.append(utmCoord[2])
             sensor.append(row[sensorColumn])
