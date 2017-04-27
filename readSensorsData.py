@@ -16,6 +16,24 @@ def readAndroSensor(fileToRead, sensorColumn = 12):
     :type arg1: int starting from 0
     :return: lists of latit, longit, easting, northing, sensor
     :rtype: [float,], [float,], [float,], [float,], [float,]
+    
+    Data from sensors:
+    0: ACCELEROMETER X (m/s²) 
+    1: ACCELEROMETER Y (m/s²) 
+    2: ACCELEROMETER Z (m/s²)   
+    12: LIGHT (lux)    
+    13: MAGNETIC FIELD X (μT)    
+    14: MAGNETIC FIELD Y (μT)    
+    15: MAGNETIC FIELD Z (μT)    
+    16: ORIENTATION Z (azimuth °)    
+    17: ORIENTATION X (pitch °)    
+    18: ORIENTATION Y (roll °)    
+    19: PROXIMITY (m)    
+    20: ATMOSPHERIC PRESSURE (hPa)    
+    21: SOUND LEVEL (dB)    
+    22: LOCATION Latitude    
+    23: LOCATION Longitude 
+
     '''
     with open(fileToRead) as csvfile:
         sensorReader = csv.reader(csvfile, delimiter=',')
@@ -49,17 +67,18 @@ def plotPath(easting, northing):
 def plotSensor(sensor):
     ''' basic sensor plot '''
     plt.figure()
-    plt.plot(sensor, label='light')
+    plt.plot(sensor, label='senosr')
     plt.xlabel('sample point')
-    plt.ylabel('Light [Lux]')
-    plt.title('Light along the path')
+    plt.ylabel('Sensor reading')
+    plt.title('Sensor reading along the path')
     
 if __name__ == '__main__':
     file = 'Uni2ThinqTanq.csv'
-    coord, easting, northing, light = readAndroSensor(file)
+#    file = 'Sensor_record_20170426_194909_AndroSensor.csv'
+    coord, easting, northing, sensor = readAndroSensor(file, 20)
     
     plotPath(easting, northing)
-    plotSensor(light)
+    plotSensor(sensor)
     
     plt.show()
     

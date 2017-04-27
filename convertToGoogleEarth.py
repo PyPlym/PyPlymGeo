@@ -10,6 +10,7 @@ http://simplekml.readthedocs.io/en/latest/index.html
 import simplekml   # if not installed: pip install simplekml
 from readSensorsData import readAndroSensor
 
+#file = 'Sensor_record_20170426_194909_AndroSensor.csv'
 file = 'Uni2ThinqTanq.csv'
 coord, easting, northing, light = readAndroSensor(file)
 
@@ -21,6 +22,6 @@ ls.extrude = 1
 ls.altitudemode = simplekml.AltitudeMode.relativetoground
 ls.style.linestyle.width = 5
 ls.style.linestyle.color = light #simplekml.Color.blue
-kml.save("LineString Styling.kml")
+kml.save("Uni2ThinqTanq.kml")
 
     
